@@ -1,0 +1,84 @@
+
+from asyncio.windows_events import NULL
+import plotly.figure_factory as pf
+import plotly.graph_objects as pg
+import statistics as s
+import pandas
+
+fig = NULL
+
+df = pandas.read_csv("StudentsPerformance.csv")
+list = df['writing score'].tolist()
+
+fig = pf.create_distplot([list], ["writing score"], show_hist=False)
+fig.show()
+
+# number = numbers()
+
+mean = s.mean(list)
+print ('this is mean ', mean)
+
+mode = s.mode(list)
+print("this is mode " ,mode)
+
+median = s.median(list)
+print("this is median " ,median)
+
+standatrdDEviation = s.stdev(list)
+print ('this is standard deviation ', standatrdDEviation)
+
+(first_standard_devation_start, first_standard_devation_end) = (mean
+        - standatrdDEviation, mean + standatrdDEviation)
+
+(second_standard_devation_start, second_standard_devation_end) = (mean
+        - standatrdDEviation * 2, mean + standatrdDEviation * 2)
+
+(third_standard_devation_start, third_standard_devation_end) = (mean
+        - standatrdDEviation * 3, mean + standatrdDEviation * 3)
+
+fig.add_trace(pg.Scatter(x=[mean, mean], y=[0, 0.04], mode='lines',
+              name='mean'))
+
+fig.add_trace(pg.Scatter(x=[first_standard_devation_start,
+              first_standard_devation_start], y=[0, 0.04], mode='lines'
+              , name='1st standar deviation start'))
+
+fig.add_trace(pg.Scatter(x=[first_standard_devation_end,
+              first_standard_devation_end], y=[0, 0.04], mode='lines',
+              name='1st standar deviation end'))
+
+fig.add_trace(pg.Scatter(x=[second_standard_devation_start,
+              second_standard_devation_start], y=[0, 0.04], mode='lines'
+              , name='2nd standar deviation start'))
+
+fig.add_trace(pg.Scatter(x=[second_standard_devation_end,
+              second_standard_devation_end], y=[0, 0.04], mode='lines',
+              name='2nd standar deviation end'))
+
+fig.add_trace(pg.Scatter(x=[third_standard_devation_start,
+              third_standard_devation_start], y=[0, 0.04], mode='lines'
+              , name='3rd standar deviation start'))
+
+fig.add_trace(pg.Scatter(x=[third_standard_devation_end,
+              third_standard_devation_end], y=[0, 0.04], mode='lines',
+              name='3rd standar deviation end'))
+
+fig.show()
+
+list_of_data_within_1_std = [result for result in list if result
+                             > first_standard_devation_start and result
+                             < first_standard_devation_end]
+
+list_of_data_within_2_std = [result for result in list if result
+                             > second_standard_devation_start
+                             and result < second_standard_devation_end]
+
+list_of_data_within_3_std = [result for result in list if result
+                             > third_standard_devation_start and result
+                             < third_standard_devation_end]
+
+print(len(list_of_data_within_1_std) * 100.0 / len(list) , "% of data lies within 1st standard deviation") 
+
+print(len(list_of_data_within_2_std) * 100.0 / len(list) , "% of data lies within 2nd standard deviation")
+
+print(len(list_of_data_within_3_std) * 100.0 / len(list) , "% of data lies within 3rd standard deviation")
